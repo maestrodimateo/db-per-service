@@ -15,7 +15,7 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     label = db.Column(db.String(100), unique = True, nullable = False)
     price = db.Column(db.Integer, nullable = False)
-    customer_id = db.Column(db.String(70), unique = True)
+    customer_id = db.Column(db.String(70))
     public_id = db.Column(db.String(255), unique = True, default = uuid4().hex)
 
 
@@ -48,6 +48,22 @@ def get_product(public_id):
     data['public_id'] = product.public_id
 
     return jsonify({'product': data})
+
+@app.route('/products/customer/<string:customer_id>', methods = ['GET'])
+def get_customer_products(customer_id):
+    products = Product.query.filter_by(customer_id = customer_id).all()
+
+    all_products = []
+    for product in products:
+        data = {}
+        data['label'] = product.label
+        data['price'] = product.price
+        data['customer_id'] = product.customer_id
+        data['public_id'] = product.public_id
+
+        all_products.append(data)
+
+    return jsonify({'products': all_products})
 
 @app.route('/product', methods = ['POST'])
 def create_product():
