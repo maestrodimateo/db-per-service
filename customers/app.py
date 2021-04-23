@@ -14,7 +14,7 @@ class Customer(db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
     fullname = db.Column(db.String(150), nullable = False)
-    public_id = db.Column(db.String(255), unique = True, default = uuid4().hex)
+    public_id = db.Column(db.String(255), unique = True)
 
 
 
@@ -46,6 +46,7 @@ def get_customer(public_id):
 def create_customer():
     response = request.get_json();
     customer = Customer(fullname = response['fullname'])
+    customer.public_id = uuid4().hex
     db.session.add(customer)
     db.session.commit()
     return jsonify({'response': "customer added with success"}), 201

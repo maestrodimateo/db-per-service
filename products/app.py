@@ -16,7 +16,7 @@ class Product(db.Model):
     label = db.Column(db.String(100), unique = True, nullable = False)
     price = db.Column(db.Integer, nullable = False)
     customer_id = db.Column(db.String(70))
-    public_id = db.Column(db.String(255), unique = True, default = uuid4().hex)
+    public_id = db.Column(db.String(255), unique = True)
 
 
 
@@ -30,6 +30,7 @@ def get_products():
         data['price'] = product.price
         data['customer_id'] = product.customer_id
         data['public_id'] = product.public_id
+
 
         all_products.append(data)
 
@@ -69,6 +70,7 @@ def get_customer_products(customer_id):
 def create_product():
     response = request.get_json();
     produit = Product(label = response['label'], price = response['price'], customer_id = response['customer_id'])
+    produit.public_id = uuid4().hex
     db.session.add(produit)
     db.session.commit()
     return jsonify({'response': "product added with success"}), 201
